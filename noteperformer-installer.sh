@@ -1,5 +1,5 @@
 # Note Performer Downloader & Installer
-# - Finlay A'Court
+# - finlayacourt
 
 if [ `whoami` != 'root' ]
   then
