@@ -4,4 +4,6 @@ macOS tool for installing [Noteperformer](http://www.noteperformer.com/) and pat
 
 ## Install
 
-`curl -sL  https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/ | sudo sh`
+```
+curl -sL  https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/ | sudo sh
+```
