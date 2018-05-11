@@ -27,7 +27,7 @@ echo 'Patch for unlimited trial [Y/n]'
 read response
 if [ $response != 'n' ]
   then
-    curl https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/libfaketime.1.dylib > /Applications/Sibelius.app/Contents/Frameworks/libfaketime.1.dylib
+    curl https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/libfaketime.1.dylib > /Applications/Sibelius*.app/Contents/Frameworks/libfaketime.1.dylib
     /usr/libexec/PlistBuddy -c 'Add :LSEnvironment:DYLD_INSERT_LIBRARIES string /Applications/Sibelius.app/Contents/Frameworks/libfaketime.1.dylib' -c 'Add :LSEnvironment:FAKETIME string @2018-01-01 00:00:00' -c 'Add :LSEnvironment:DYLD_FORCE_FLAT_NAMESPACE string 1' '/Applications/Sibelius.app/Contents/Info.plist'
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -v -f /Applications/Sibelius.app
 fi
