@@ -27,8 +27,45 @@ echo 'Patch for unlimited trial [Y/n]'
 read response
 if [ $response != 'n' ]
   then
-    curl https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/libfaketime.1.dylib > /Applications/Sibelius*.app/Contents/Frameworks/libfaketime.1.dylib
-    /usr/libexec/PlistBuddy -c 'Add :LSEnvironment:DYLD_INSERT_LIBRARIES string /Applications/Sibelius.app/Contents/Frameworks/libfaketime.1.dylib' -c 'Add :LSEnvironment:FAKETIME string @2018-01-01 00:00:00' -c 'Add :LSEnvironment:DYLD_FORCE_FLAT_NAMESPACE string 1' '/Applications/Sibelius.app/Contents/Info.plist'
-    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -v -f /Applications/Sibelius.app
+    # Try and find sibelius
+    sibeliusLocations=()
+    while IFS=  read -r -d $'\0'; do
+        sibeliusLocations+=("$REPLY")
+    done < <(find /Applications -iname "Sibelius*.app" -maxdepth 1 -print0)
+    numberSibelius=${#sibeliusLocations[@]}
+
+    # Ask for user help
+    while true; do
+      if (($numberSibelius == 0))
+        then
+          echo "Cannot find Sibelius. Where is Sibelius.app?"
+          read sibeliusLocation
+          if [ -f "${sibeliusLocation}/Contents/MacOS/Sibelius" ]
+            then
+              echo "Sibelius found!"
+              break
+            else
+              echo "No file at ${sibeliusLocation}/Contents/MacOS/Sibelius"
+          fi
+      elif (($numberSibelius > 1))
+        then
+          echo "Found $numberSibelius Sibelius Applications."
+          for ((i=0;i<$numberSibelius;i++)); do
+            echo "$i. ${sibeliusLocations[i]}"
+          done
+          echo "Select which:"
+          read i
+          sibeliusLocation=${sibeliusLocations[i]}
+          break
+      else
+        sibeliusLocation=${sibeliusLocations[0]}
+        break
+      fi
+    done
+    
+    # Instal to Sibelius
+    curl https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/libfaketime.1.dylib > ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib
+    /usr/libexec/PlistBuddy -c 'Add :LSEnvironment:DYLD_INSERT_LIBRARIES string ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib' -c 'Add :LSEnvironment:FAKETIME string @2018-01-01 00:00:00' -c 'Add :LSEnvironment:DYLD_FORCE_FLAT_NAMESPACE string 1' '/Applications/Sibelius.app/Contents/Info.plist'
+    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -v -f ${sibeliusLocation}
 fi
 exit
