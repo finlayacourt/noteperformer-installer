@@ -96,6 +96,7 @@ if [ $response != 'n' ]
     echo
     echo 'Cleaning up...'
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -v -f ${sibeliusLocation}
+    rm -rf /tmp/libfaketime*
     echo '...done'
     echo 
     echo 'Do you want to run Sibelius to test? [Y/n]'
