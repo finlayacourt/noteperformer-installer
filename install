@@ -11,23 +11,33 @@ if [ `whoami` != 'root' ]
 fi
 
 # Download & install noteperformer
+echo
 echo 'Install Noteperformer [Y/n]'
 read response
 if [ $response != 'n' ]
-  then  
+  then
+    echo
+    echo 'Downloading...'
     curl http://www.noteperformer.com/DownloadNotePerformerTrial.php -L > /tmp/noteperformer.dmg
+    echo 'done'
+    echo
+    echo 'Installing...'
     hdiutil attach /tmp/noteperformer.dmg
     installer -package /Volumes/NotePerformer*/*.pkg -target /
     hdiutil detach /Volumes/NotePerformer*
     rm /tmp/noteperformer.dmg
+    echo 'done'
 fi
 
 # Install libfaketime to Sibelius
+echo
 echo 'Patch for unlimited trial [Y/n]'
 read response
+echo
 if [ $response != 'n' ]
   then
     # Try and find sibelius
+    echo 'Finding Sibleius...'
     sibeliusLocations=()
     while IFS=  read -r -d $'\0'; do
         sibeliusLocations+=("$REPLY")
@@ -38,17 +48,20 @@ if [ $response != 'n' ]
     while true; do
       if (($numberSibelius == 0))
         then
-          echo "Cannot find Sibelius. Where is Sibelius.app?"
+          echo
+          echo "Cannot find Sibelius. Input manually:"
           read sibeliusLocation
           if [ -f "${sibeliusLocation}/Contents/MacOS/Sibelius" ]
             then
-              echo "Sibelius found!"
+              echo "done"
               break
             else
               echo "No file at ${sibeliusLocation}/Contents/MacOS/Sibelius"
+              echo
           fi
       elif (($numberSibelius > 1))
         then
+          echo
           echo "Found $numberSibelius Sibelius Applications."
           for ((i=0;i<$numberSibelius;i++)); do
             echo "$i. ${sibeliusLocations[i]}"
@@ -56,16 +69,31 @@ if [ $response != 'n' ]
           echo "Select which:"
           read i
           sibeliusLocation=${sibeliusLocations[i]}
+          echo
+          echo 'done'
           break
       else
         sibeliusLocation=${sibeliusLocations[0]}
+        echo 'done'
         break
       fi
     done
     
-    # Instal to Sibelius
+    # Install to patch Sibelius
+    echo
+    echo 'Installing patch...'
     curl https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/libfaketime.1.dylib > ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib
     /usr/libexec/PlistBuddy -c 'Add :LSEnvironment:DYLD_INSERT_LIBRARIES string ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib' -c 'Add :LSEnvironment:FAKETIME string @2018-01-01 00:00:00' -c 'Add :LSEnvironment:DYLD_FORCE_FLAT_NAMESPACE string 1' '/Applications/Sibelius.app/Contents/Info.plist'
+    echo 'done'
+    echo
+    echo 'Clearning up...'
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -v -f ${sibeliusLocation}
+    echo 'done'
+    echo 
+    echo 'Do you want to run Sibelius to test? [Y/n]'
+    if [ $response != 'n' ]
+      then
+        open ${sibeliusLocation}
+    fi
 fi
 exit
