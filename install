@@ -83,13 +83,14 @@ if [ $response != 'n' ]
     echo
     echo 'Downloading patch...'
     curl -L $(curl -s https://api.github.com/repos/wolfcw/libfaketime/releases/latest | grep '"zipball_url":' | sed -E 's/.*"([^"]+)".*/\1/') > /tmp/libfaketime.zip
-    unzip /tmp/libfaketime.zip /tmp/libfaketime
+    unzip /tmp/libfaketime.zip /tmp/libfaketime/
     echo '...done'
     echo
     echo 'Installing patch...'
     cd /tmp/libfaketime/*/
     make
     mv src/libfaketime.1.dylib ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib
+    echo
     /usr/libexec/PlistBuddy -c 'Add :LSEnvironment:DYLD_INSERT_LIBRARIES string ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib' -c 'Add :LSEnvironment:FAKETIME string @2018-01-01 00:00:00' -c 'Add :LSEnvironment:DYLD_FORCE_FLAT_NAMESPACE string 1' '/Applications/Sibelius.app/Contents/Info.plist'
     echo '...done'
     echo
