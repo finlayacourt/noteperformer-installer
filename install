@@ -19,14 +19,14 @@ if [ $response != 'n' ]
     echo
     echo 'Downloading...'
     curl http://www.noteperformer.com/DownloadNotePerformerTrial.php -L > /tmp/noteperformer.dmg
-    echo 'done'
+    echo '...done'
     echo
     echo 'Installing...'
     hdiutil attach /tmp/noteperformer.dmg
     installer -package /Volumes/NotePerformer*/*.pkg -target /
     hdiutil detach /Volumes/NotePerformer*
     rm /tmp/noteperformer.dmg
-    echo 'done'
+    echo '...done'
 fi
 
 # Install libfaketime to Sibelius
@@ -53,7 +53,7 @@ if [ $response != 'n' ]
           read sibeliusLocation
           if [ -f "${sibeliusLocation}/Contents/MacOS/Sibelius" ]
             then
-              echo "done"
+              echo "...done"
               break
             else
               echo "No file at ${sibeliusLocation}/Contents/MacOS/Sibelius"
@@ -70,11 +70,11 @@ if [ $response != 'n' ]
           read i
           sibeliusLocation=${sibeliusLocations[i]}
           echo
-          echo 'done'
+          echo '...done'
           break
       else
         sibeliusLocation=${sibeliusLocations[0]}
-        echo 'done'
+        echo '...done'
         break
       fi
     done
@@ -84,13 +84,14 @@ if [ $response != 'n' ]
     echo 'Installing patch...'
     curl https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/libfaketime.1.dylib > ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib
     /usr/libexec/PlistBuddy -c 'Add :LSEnvironment:DYLD_INSERT_LIBRARIES string ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib' -c 'Add :LSEnvironment:FAKETIME string @2018-01-01 00:00:00' -c 'Add :LSEnvironment:DYLD_FORCE_FLAT_NAMESPACE string 1' '/Applications/Sibelius.app/Contents/Info.plist'
-    echo 'done'
+    echo '...done'
     echo
-    echo 'Clearning up...'
+    echo 'Cleaning up...'
     /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -v -f ${sibeliusLocation}
-    echo 'done'
+    echo '...done'
     echo 
     echo 'Do you want to run Sibelius to test? [Y/n]'
+    read response
     if [ $response != 'n' ]
       then
         open ${sibeliusLocation}
