@@ -31,6 +31,7 @@ fi
 
 # Install libfaketime to Sibelius
 echo
+echo 'WARNING!! libfaketime can cause errors when saving work, test before it matters!'
 echo 'Patch for unlimited trial [Y/n]'
 read response
 echo
