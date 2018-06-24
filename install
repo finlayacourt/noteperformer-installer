@@ -18,14 +18,12 @@ if [ $response != 'n' ]
   then
     echo
     echo 'Downloading...'
-    curl http://www.noteperformer.com/DownloadNotePerformerTrial.php -L > /tmp/noteperformer.dmg
+    curl https://www.noteperformer.com/DownloadNotePerformerTrial3.php -L > /tmp/noteperformer.pkg
     echo '...done'
     echo
     echo 'Installing...'
-    hdiutil attach /tmp/noteperformer.dmg
-    installer -package /Volumes/NotePerformer*/*.pkg -target /
-    hdiutil detach /Volumes/NotePerformer*
-    rm /tmp/noteperformer.dmg
+    installer -package /tmp/noteperformer.pkg -target /
+    rm /tmp/noteperformer.pkg
     echo '...done'
 fi
 
