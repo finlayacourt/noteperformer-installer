@@ -27,82 +27,18 @@ if [ $response != 'n' ]
     echo '...done'
 fi
 
-# Install libfaketime to Sibelius
+# Reset Trial
 echo
-echo 'WARNING!! libfaketime can cause errors when saving work, test before it matters!'
-echo 'Patch for unlimited trial [Y/n]'
+echo 'Reset Trial limit [Y/n]'
 read response
 echo
 if [ $response != 'n' ]
   then
-    # Try and find sibelius
-    echo 'Finding Sibleius...'
-    sibeliusLocations=()
-    while IFS=  read -r -d $'\0'; do
-        sibeliusLocations+=("$REPLY")
-    done < <(find /Applications -iname "Sibelius*.app" -maxdepth 1 -print0)
-    numberSibelius=${#sibeliusLocations[@]}
-
-    # Ask for user help
-    while true; do
-      if (($numberSibelius == 0))
-        then
-          echo
-          echo "Cannot find Sibelius. Input manually:"
-          read sibeliusLocation
-          if [ -f "${sibeliusLocation}/Contents/MacOS/Sibelius" ]
-            then
-              echo "...done"
-              break
-            else
-              echo "No file at ${sibeliusLocation}/Contents/MacOS/Sibelius"
-              echo
-          fi
-      elif (($numberSibelius > 1))
-        then
-          echo
-          echo "Found $numberSibelius Sibelius Applications."
-          for ((i=0;i<$numberSibelius;i++)); do
-            echo "$i. ${sibeliusLocations[i]}"
-          done
-          echo "Select which:"
-          read i
-          sibeliusLocation=${sibeliusLocations[i]}
-          echo
-          echo '...done'
-          break
-      else
-        sibeliusLocation=${sibeliusLocations[0]}
-        echo '...done'
-        break
-      fi
-    done
-    
-    # Install to patch Sibelius
-    echo
-    echo 'Downloading patch...'
-    curl -L $(curl -s https://api.github.com/repos/wolfcw/libfaketime/releases/latest | grep '"zipball_url":' | sed -E 's/.*"([^"]+)".*/\1/') > /tmp/libfaketime.zip
-    unzip /tmp/libfaketime.zip /tmp/libfaketime/
-    echo '...done'
-    echo
-    echo 'Installing patch...'
-    cd /tmp/libfaketime/*/
-    make
-    mv src/libfaketime.1.dylib ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib
-    echo
-    /usr/libexec/PlistBuddy -c 'Add :LSEnvironment:DYLD_INSERT_LIBRARIES string ${sibeliusLocation}/Contents/Frameworks/libfaketime.1.dylib' -c 'Add :LSEnvironment:FAKETIME string @2018-01-01 00:00:00' -c 'Add :LSEnvironment:DYLD_FORCE_FLAT_NAMESPACE string 1' '/Applications/Sibelius.app/Contents/Info.plist'
-    echo '...done'
-    echo
-    echo 'Cleaning up...'
-    /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -v -f ${sibeliusLocation}
-    rm -rf /tmp/libfaketime*
-    echo '...done'
-    echo 
-    echo 'Do you want to run Sibelius to test? [Y/n]'
-    read response
-    if [ $response != 'n' ]
-      then
-        open ${sibeliusLocation}
-    fi
+    filename=$(curl -sIL -X GET https://www.noteperformer.com/DownloadNotePerformerTrial3.php | grep 'filename' | sed -E 's/.*\[(.*)\].*/\1/g')
+    date=$(echo $filename | sed -E 's/(.* .*) .*/\1/g')
+    id=$(echo $filename |  sed -E 's/.* .* //g')
+    rm -f "$LICENSE_FILE"
+    echo "$date" >> "/Library/Application Support/NotePerformer/.license"
+    echo ${id%??} >> "/Library/Application Support/NotePerformer/.license"
 fi
 exit
