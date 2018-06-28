@@ -31,14 +31,20 @@ fi
 echo
 echo 'Reset Trial limit [Y/n]'
 read response
-echo
 if [ $response != 'n' ]
   then
+    echo
+    echo 'Getting key...'
     filename=$(curl -sIL -X GET https://www.noteperformer.com/DownloadNotePerformerTrial3.php | grep 'filename' | sed -E 's/.*\[(.*)\].*/\1/g')
     date=$(echo $filename | sed -E 's/(.* .*) .*/\1/g')
     id=$(echo $filename |  sed -E 's/.* .* //g')
+    echo $date
+    echo $id
+    echo 
+    echo 'Patching...'
     rm -f "/Library/Application Support/NotePerformer/.license"
     echo "$date" >> "/Library/Application Support/NotePerformer/.license"
     echo ${id%??} >> "/Library/Application Support/NotePerformer/.license"
+    echo '...done'
 fi
 exit
