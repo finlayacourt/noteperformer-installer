@@ -1,6 +1,6 @@
 # Noteperformer Installer
 
-macOS tool for installing [Noteperformer](http://www.noteperformer.com/) or reseting trial countdown
+macOS tool for installing [Noteperformer](http://www.noteperformer.com/) or resetting trial countdown
 
 ## Install
 
