@@ -1,9 +1,9 @@
 # Noteperformer Installer
 
-macOS tool for installing [Noteperformer](http://www.noteperformer.com/) or resetting trial countdown
+macOS tool for resetting the trial of [Noteperformer](http://www.noteperformer.com/) 
 
 ## Install
 
 ```
-sudo bash -c "$(curl https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/install -s -L)"
+sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/finlayacourt/noteperformer-installer/master/install)"
 ```
