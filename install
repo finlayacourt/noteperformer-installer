@@ -3,55 +3,27 @@
 # Note Performer Downloader & Installer
 # - finlayacourt
 
-# Check for root
 if [ `whoami` != 'root' ]
   then
     echo "You must be root to do this."
     exit
 fi
 
-# Download & install noteperformer
 echo
-echo 'Install Noteperformer [Y/n]'
+echo "Reset Noteperformer trial? [Y/n]"
 read response
-if [ $response != 'n' ]
-  then
+if [[ $response != "n" ]]
+then
     echo
-    echo 'Downloading...'
-    curl https://www.noteperformer.com/DownloadNotePerformerTrial3.php -L > /tmp/noteperformer.pkg
-    echo '...done'
-    echo
-    echo 'Removing old versions...'
-    echo
-    /Library/Application\ Support/NotePerformer/Uninstall\ NotePerformer.command
-    echo
-    echo "...done"
-    echo
-    echo 'Installing...'
-    installer -package /tmp/noteperformer.pkg -target /
-    rm /tmp/noteperformer.pkg
-    echo '...done'
-fi
-
-# Reset Trial
-echo
-echo 'Reset Trial limit [Y/n]'
-echo '(will fail if versions don’t match, reinstall instead)'
-read response
-if [ $response != 'n' ]
-  then
-    echo
-    echo 'Getting key...'
-    filename=$(curl -sIL -X GET https://www.noteperformer.com/DownloadNotePerformerTrial3.php | grep 'filename' | sed -E 's/.*\[(.*)\].*/\1/g')
-    date=$(echo $filename | sed -E 's/(.* .*) .*/\1/g')
-    id=$(echo $filename |  sed -E 's/.* .* //g')
-    echo $date
-    echo $id
-    echo 
-    echo 'Patching...'
+    echo -n "Getting key..."
+    filename=$(curl -sIL -X GET https://www.noteperformer.com/DownloadNotePerformerTrial3.php | grep "filename" | sed -E "s/.*\[(.*)\].*/\1/g")
+    date=$(echo $filename | sed -E "s/(.* .*) .*/\1/g")
+    id=$(echo $filename |  sed -E "s/.* .* //g")
+    echo " Done!"
+    echo -n "Patching..."
     rm -f "/Library/Application Support/NotePerformer/.license"
     echo "$date" >> "/Library/Application Support/NotePerformer/.license"
     echo ${id%??} >> "/Library/Application Support/NotePerformer/.license"
-    echo '...done'
+    echo " Done!"
 fi
 exit
